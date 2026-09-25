@@ -1,4 +1,13 @@
-"""Default recipe: 1,200 steps x 32 sequences x 256 targets = 9,830,400 tokens."""
+"""Default recipe: 1,200 steps x 32 sequences x 256 targets = 9,830,400 tokens.
+
+Student additions (all defaults reproduce the original recipe exactly):
+  --lr, --min-lr-ratio, --warmup   peak LR, final LR as a fraction of peak, warmup steps
+  --weight-decay, --decay-2d-only  AdamW decay; optionally only on matrices (not norms/biases)
+  --grad-clip                      gradient-norm clipping threshold
+  --ema                            EMA of weights (e.g. 0.999); 0 disables. When enabled, the saved
+                                   checkpoint holds the EMA weights and metrics.json also reports
+                                   the raw (non-averaged) weights' validation score.
+"""
 import argparse
 import json
 import math
@@ -22,11 +31,20 @@ def main():
     p.add_argument('--seed', type=int, default=17)
     p.add_argument('--steps', type=int, default=1200)
     p.add_argument('--batch-size', type=int, default=32)
+    p.add_argument('--lr', type=float, default=.001)
+    p.add_argument('--min-lr-ratio', type=float, default=.1)
+    p.add_argument('--warmup', type=int, default=100)
+    p.add_argument('--weight-decay', type=float, default=.1)
+    p.add_argument('--decay-2d-only', action='store_true')
+    p.add_argument('--grad-clip', type=float, default=1.)
+    p.add_argument('--ema', type=float, default=0.)
     p.add_argument('--eval-every', type=int, default=0,
                    help='Optional validation-curve interval; 0 evaluates only after training.')
     args = p.parse_args()
     if args.steps < 1 or args.batch_size < 1:
         p.error('Batch size and step count must be positive.')
+    if args.warmup < 1 or not 0 <= args.ema < 1:
+        p.error('Warmup must be positive and --ema must be in [0, 1).')
     if args.run_dir.exists() and any(args.run_dir.iterdir()):
         p.error('Run directory already contains results. Use a new --run-dir.')
     device, precision = setup(args.device, args.precision, args.threads)
@@ -36,7 +54,14 @@ def main():
     config = json.loads(args.config.read_text())
     model, implementation_sha = make_model(args.implementation, config, device)
     args.run_dir.mkdir(parents=True, exist_ok=True)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=.001, weight_decay=.1)
+    if args.decay_2d_only:
+        named = list(model.named_parameters())
+        groups = [{'params': [q for _, q in named if q.dim() >= 2], 'weight_decay': args.weight_decay},
+                  {'params': [q for _, q in named if q.dim() < 2], 'weight_decay': 0.}]
+    else:
+        groups = model.parameters()
+    optimizer = torch.optim.AdamW(groups, lr=args.lr, weight_decay=args.weight_decay)
+    ema = {k: v.detach().clone() for k, v in model.state_dict().items()} if args.ema > 0 else None
     tokens = data['train'][0].to(device)
     rng = torch.Generator().manual_seed(args.seed)
     if device.type == 'cuda':
@@ -49,15 +74,24 @@ def main():
     for step in range(args.steps):
         starts = torch.randint(len(tokens)-257, (args.batch_size,), generator=rng).to(device)
         batch = tokens[starts[:,None]+torch.arange(257,device=device)]
-        learning_rate = .001 * min(1.,(step+1)/100) * (.1+.9*.5*(1+math.cos(math.pi*step/args.steps)))
+        learning_rate = args.lr * min(1.,(step+1)/args.warmup) * (
+            args.min_lr_ratio+(1-args.min_lr_ratio)*.5*(1+math.cos(math.pi*step/args.steps)))
         for group in optimizer.param_groups:
             group['lr'] = learning_rate
         optimizer.zero_grad(set_to_none=True)
         with autocast(device, precision):
             loss = F.cross_entropy(model(batch[:,:-1]).flatten(0,1).float(),batch[:,1:].flatten())
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(),1.)
+        torch.nn.utils.clip_grad_norm_(model.parameters(),args.grad_clip)
         optimizer.step()
+        if ema is not None:
+            decay = min(args.ema, (step+1)/(step+10))
+            with torch.no_grad():
+                for key, value in model.state_dict().items():
+                    if value.dtype.is_floating_point:
+                        ema[key].lerp_(value, 1-decay)
+                    else:
+                        ema[key].copy_(value)
         if (step+1)%100 == 0 or step+1 == args.steps:
             row = {'step':step+1,'loss':loss.item(),'seconds':time.perf_counter()-started-intermediate_validation_seconds}
             history.append(row)
@@ -71,6 +105,11 @@ def main():
     if device.type == 'cuda':
         torch.cuda.synchronize(device)
     train_seconds = time.perf_counter()-started-intermediate_validation_seconds
+    validation_raw = None
+    if ema is not None:
+        validation_raw = score(model,*data['validation'],device,'fp32')
+        validation_raw.pop('window_nll_nats')
+        model.load_state_dict(ema)
     validation = score(model,*data['validation'],device,'fp32')
     validation.pop('window_nll_nats')
     checkpoint = args.run_dir/'checkpoint.pt'
@@ -80,7 +119,9 @@ def main():
     result = {'protocol':PROTOCOL,'implementation':args.implementation,'config':config,'seed':args.seed,
               'parameters':sum(p.numel() for p in model.parameters()),'precision':precision,
               'train_tokens':args.steps*args.batch_size*256,'preparation_seconds':preparation_seconds,
-              'train_seconds':train_seconds,'validation':validation,'history':history,
+              'train_seconds':train_seconds,'validation':validation,'validation_raw_weights':validation_raw,
+              'recipe':{k:(str(v) if isinstance(v,Path) else v) for k,v in vars(args).items()},
+              'history':history,
               'validation_history':validation_history,
               'intermediate_validation_seconds':intermediate_validation_seconds,
               'process_seconds':time.perf_counter()-total_started,
