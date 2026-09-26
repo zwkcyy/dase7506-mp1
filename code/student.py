@@ -154,17 +154,25 @@ class StudentGPT(nn.Module):
         return self.mix_cache(log_probs, hidden.float(), ids)
 
     def mix_cache(self, log_probs, hidden, ids):
-        batch, length, vocab = log_probs.shape
+        # Sparse but exact: p_cache is non-zero only on tokens seen earlier in the window, so every
+        # other vocabulary entry is just (1 - lambda) * p_model, a constant shift in log space.
+        batch, length, _ = log_probs.shape
         h = F.normalize(hidden, dim=-1)
-        keys, values = h[:, :-1], ids[:, 1:]                       # key i predicted token ids[:, i+1]
-        scores = self.cache_theta * h @ keys.transpose(1, 2)        # [batch, length, length-1]
-        allowed = torch.ones(length, length - 1, dtype=torch.bool, device=ids.device).tril(-1)  # i < t
-        weights = torch.softmax(scores.masked_fill(~allowed, float('-inf')), dim=-1).nan_to_num(0.)
-        cache = torch.zeros_like(log_probs).scatter_add_(-1, values[:, None, :].expand(batch, length, length - 1), weights)
-        mixed = torch.logaddexp(log_probs + math.log(1 - self.cache_lambda),
-                                cache.log() + math.log(self.cache_lambda))
-        has_history = allowed.any(-1)[None, :, None]                # False only at position 0
-        return torch.where(has_history, mixed, log_probs)
+        keys, values = h[:, :-1], ids[:, 1:]                   # key i predicted token ids[:, i+1]
+        queries = h[:, 1:]                                      # row r is position t = r + 1
+        scores = self.cache_theta * queries @ keys.transpose(1, 2)       # [batch, length-1, length-1]
+        allowed = torch.ones(length - 1, length - 1, dtype=torch.bool, device=ids.device).tril()  # i <= r, i.e. i < t
+        weights = torch.softmax(scores.masked_fill(~allowed, float('-inf')), dim=-1)
+        same = (values[:, :, None] == values[:, None, :]).to(weights.dtype)  # same[j, i]: key j and key i share a token
+        cache_at_key = weights @ same                           # p_cache(values[i]) at each row
+        index = values[:, None, :].expand(batch, length - 1, length - 1)
+        mixed_at_key = torch.logaddexp(log_probs[:, 1:].gather(-1, index) + math.log(1 - self.cache_lambda),
+                                       cache_at_key.log() + math.log(self.cache_lambda))
+        shift = torch.full((1, length, 1), math.log(1 - self.cache_lambda), dtype=log_probs.dtype, device=ids.device)
+        shift[:, 0] = 0.                                        # position 0 has no history: pure p_model
+        out = log_probs + shift
+        out[:, 1:].scatter_(-1, index, mixed_at_key)            # duplicate tokens write identical values
+        return out
 
 
 def build_model(config):
