@@ -27,3 +27,31 @@ step 10800 (1.5573) and ends at 1.5651, while E7 ends at 1.5392.
 - Implementation: `student` (sparse exact within-window cache, commit 2ef7d3d)
 - Checkpoint SHA256: `b1a16def50ec0cbc3656f46392c049dde58da3d907bad8dc70152fb73215da0b`
 - Checkpoint size: 20.40 MiB
+
+## Resource check before test (validation, 9 rounds, `measure.py --compare` vs `runs/baseline`)
+
+time_ratio_median 3.329 (min 3.293, IQR 3.315–3.361), baseline spread 7.8%, peak RAM 1.837 GiB,
+checkpoint 20.40 MiB. All within limits.
+
+## Frozen test evaluation (run once)
+
+Code frozen at commit `fb51697b14f78cc86fc086eb40922a6a2e279fa6`. Official command:
+`python evaluate.py --checkpoint runs/final/checkpoint.pt --device cpu --precision fp32 --threads 4 --split test --output runs/final/test.json`
+
+- **Test BPB: 1.519774** (token ppl 23.97, 428,405 targets, 1,292,013 UTF-8 bytes; the official baseline is 2.101260)
+- checkpoint_sha256: `b1a16def50ec0cbc3656f46392c049dde58da3d907bad8dc70152fb73215da0b`
+- evaluator_sha256: `128bcb2dab0be0d427505bddb4671e3ab3a8f78e114be79a689c0f9029af133d` (unmodified evaluate.py)
+- implementation_sha256 (student.py): `ec9777670bb9d592fabc3ee9378eb1a1c9324f605fc354c4e67a9665ce5f9c45`
+
+Test-split measurement (`measure.py --compare ... --split test --repeats 5`, CPU fp32, 4 threads):
+
+| | rounds (s) | median (s) |
+|---|---|---|
+| baseline | 14.9 14.8 14.9 15.0 14.9 | 14.9 |
+| final | 49.7 49.8 49.4 49.6 50.9 | 49.7 |
+
+- **time_ratio_median 3.329** (per-round 3.33 / 3.36 / 3.32 / 3.31 / 3.41), limit 5
+- **peak RAM 1.836 GiB** (whole evaluate.py process tree), limit 4 GiB
+- **checkpoint 20.40 MiB**, limit 64 MiB
+
+No further test evaluations are to be run on any model.
