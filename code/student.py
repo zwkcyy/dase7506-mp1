@@ -10,6 +10,15 @@ Optional keys (defaults reproduce the baseline architecture of model.py):
   dropout     residual/embedding dropout, active only in training mode (default 0.0)
   scaled_init false (default) | true          GPT-2 style 1/sqrt(2*depth) init of residual outputs
   rope_base   rotary base frequency (default 10000)
+  cache_lambda  weight of the within-window neural cache at evaluation (default 0.0 = off)
+  cache_theta   sharpness of the cache's cosine-similarity kernel (default 10.0; 0 = uniform copy)
+
+Within-window neural cache (after Grave et al., 2017, "Improving Neural Language Models
+with a Continuous Cache"), used only in predict_log_probs:
+  p(w | x_<=t) = (1 - lambda) * p_model(w) + lambda * p_cache(w)
+  p_cache(w)   = sum_{i<t, x_{i+1}=w} softmax_i(theta * cos(h_t, h_i))
+where h are the final normalised hidden states of the same window. Position t only uses
+h_0..h_t and tokens x_1..x_t, i.e. ids[:, :t+1]; position 0 has no history and uses p_model.
 
 Both interfaces of model.GPT are kept: forward() returns logits for training and
 predict_log_probs() returns normalised log-probabilities for evaluation. Nothing is
@@ -21,7 +30,7 @@ from torch import nn
 from torch.nn import functional as F
 
 DEFAULTS = dict(norm='layer', mlp='gelu', pos='learned', bias=True, mlp_hidden=None,
-                dropout=0.0, scaled_init=False, rope_base=10000.0)
+                dropout=0.0, scaled_init=False, rope_base=10000.0, cache_lambda=0.0, cache_theta=10.0)
 
 
 def make_norm(kind, width):
@@ -99,6 +108,9 @@ class StudentGPT(nn.Module):
         self.config = dict(config)
         self.context = cfg['context']
         self.dropout = cfg['dropout']
+        self.cache_lambda, self.cache_theta = float(cfg['cache_lambda']), float(cfg['cache_theta'])
+        if not 0 <= self.cache_lambda < 1:
+            raise ValueError('cache_lambda must be in [0, 1).')
         width = cfg['width']
         self.token = nn.Embedding(cfg['vocab'], width)
         self.pos = nn.Embedding(self.context, width) if cfg['pos'] == 'learned' else None
@@ -135,7 +147,24 @@ class StudentGPT(nn.Module):
 
     def predict_log_probs(self, ids):
         """Evaluation interface: normalized log probabilities; position t sees ids[:, :t+1] only."""
-        return F.log_softmax(self(ids).float(), dim=-1)
+        hidden = self.features(ids)
+        log_probs = F.log_softmax(self.head(hidden).float(), dim=-1)
+        if self.cache_lambda == 0 or ids.shape[1] < 2:
+            return log_probs
+        return self.mix_cache(log_probs, hidden.float(), ids)
+
+    def mix_cache(self, log_probs, hidden, ids):
+        batch, length, vocab = log_probs.shape
+        h = F.normalize(hidden, dim=-1)
+        keys, values = h[:, :-1], ids[:, 1:]                       # key i predicted token ids[:, i+1]
+        scores = self.cache_theta * h @ keys.transpose(1, 2)        # [batch, length, length-1]
+        allowed = torch.ones(length, length - 1, dtype=torch.bool, device=ids.device).tril(-1)  # i < t
+        weights = torch.softmax(scores.masked_fill(~allowed, float('-inf')), dim=-1).nan_to_num(0.)
+        cache = torch.zeros_like(log_probs).scatter_add_(-1, values[:, None, :].expand(batch, length, length - 1), weights)
+        mixed = torch.logaddexp(log_probs + math.log(1 - self.cache_lambda),
+                                cache.log() + math.log(self.cache_lambda))
+        has_history = allowed.any(-1)[None, :, None]                # False only at position 0
+        return torch.where(has_history, mixed, log_probs)
 
 
 def build_model(config):
