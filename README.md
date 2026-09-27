@@ -1,10 +1,12 @@
 # MP1: a small GPT trained from scratch on WikiText-2 (HKU DASE7506)
 
-Author: Zhu Wenkang (HKU student ID u3684363), GitHub: zwkcyy
+Author: Zhu Wenkang (HKU student ID 3036843630), GitHub: zwkcyy
 
 Final predictor: a 5.3M-parameter GPT (RoPE, SwiGLU, RMSNorm, no biases, scaled init) trained for
 14,400 steps with dropout 0.1 and an EMA of the weights, plus a sparse within-window neural cache
 at evaluation time. It uses the supplied evaluator and data unchanged.
+
+Full report: [REPORT.md](REPORT.md) ([PDF](REPORT.pdf))
 
 ## 1. Results
 
