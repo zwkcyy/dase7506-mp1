@@ -1,0 +1,72 @@
+{
+  "source": "code/runs/timing-scale_w256d6/measure.txt",
+  "note": "",
+  "rounds": [
+    {
+      "round": 0,
+      "role": "baseline",
+      "scoring_seconds": 13.020487499999945,
+      "peak_ram_gib": 1.8010292053222656,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 0,
+      "role": "candidate",
+      "scoring_seconds": 36.42291430000023,
+      "peak_ram_gib": 1.8175430297851562,
+      "bpb": 3.503198472505038
+    },
+    {
+      "round": 1,
+      "role": "baseline",
+      "scoring_seconds": 12.894698699999935,
+      "peak_ram_gib": 1.8021621704101562,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 1,
+      "role": "candidate",
+      "scoring_seconds": 35.841059100000166,
+      "peak_ram_gib": 1.8281059265136719,
+      "bpb": 3.503198472505038
+    },
+    {
+      "round": 2,
+      "role": "baseline",
+      "scoring_seconds": 12.046152800000073,
+      "peak_ram_gib": 1.76995849609375,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 2,
+      "role": "candidate",
+      "scoring_seconds": 34.57251069999984,
+      "peak_ram_gib": 1.8098869323730469,
+      "bpb": 3.503198472505038
+    }
+  ],
+  "summary": {
+    "split": "validation",
+    "baseline": {
+      "median_scoring_seconds": 12.894698699999935,
+      "min_scoring_seconds": 12.046152800000073,
+      "max_peak_ram_gib": 1.8021621704101562,
+      "checkpoint_mib": 4.1683244705200195,
+      "bpb": 2.071083638533899
+    },
+    "candidate": {
+      "median_scoring_seconds": 35.841059100000166,
+      "min_scoring_seconds": 34.57251069999984,
+      "max_peak_ram_gib": 1.8281059265136719,
+      "checkpoint_mib": 20.35216236114502,
+      "bpb": 3.503198472505038
+    },
+    "time_ratios": [
+      2.7973541159653497,
+      2.77951892741785,
+      2.8700043303451728
+    ],
+    "time_ratio_median": 2.7973541159653497,
+    "within_limits": true
+  }
+}

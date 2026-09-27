@@ -1,0 +1,197 @@
+{
+  "checkpoint": "runs\\e4-long-drop10\\checkpoint.pt",
+  "best": {
+    "cache_lambda": 0.05,
+    "cache_theta": 10.0,
+    "validation_bpb": 1.5183706324030406
+  },
+  "cache_off_bpb": 1.5392792850006909,
+  "gain_bpb": 0.02090865259765029,
+  "grid": [
+    {
+      "cache_lambda": 0.0,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.5392792850006909
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.5369013081016751
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.5274174461558843
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5212570229329865
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5220377757143881
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.5245654696603268
+    },
+    {
+      "cache_lambda": 0.02,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.5262023077643998
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.542799591695309
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.527519811789265
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5183706324030406
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5204061411347327
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.5250941951220622
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.528069792320181
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.5576375839708114
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.5356155273261316
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.523086179713122
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5267859313922871
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.5341840043451944
+    },
+    {
+      "cache_lambda": 0.1,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.5388404132299116
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.5757545910006134
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.5482648685919724
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5330209114930387
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5381601052812857
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.5478477085427467
+    },
+    {
+      "cache_lambda": 0.15,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.5539335090609665
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.5963065712936015
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.563897886497659
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5462324858088647
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5527144670992483
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.564509187619896
+    },
+    {
+      "cache_lambda": 0.2,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.5719196755429503
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 0.0,
+      "validation_bpb": 1.6440742230002183
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 5.0,
+      "validation_bpb": 1.6024495856851817
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5803389439126143
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 20.0,
+      "validation_bpb": 1.5894377448627586
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 40.0,
+      "validation_bpb": 1.6052701805416687
+    },
+    {
+      "cache_lambda": 0.3,
+      "cache_theta": 80.0,
+      "validation_bpb": 1.6152425676739994
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "protocol": "7506-mp1-wt2-v2",
+  "implementation": "student",
+  "config": {
+    "vocab": 2048,
+    "width": 256,
+    "heads": 4,
+    "depth": 6,
+    "context": 256,
+    "norm": "layer",
+    "mlp": "swiglu",
+    "pos": "rope",
+    "bias": false,
+    "scaled_init": true,
+    "dropout": 0.0
+  },
+  "seed": 17,
+  "parameters": 5347840,
+  "precision": "fp32",
+  "train_tokens": 9830400,
+  "preparation_seconds": 11.047284199999922,
+  "train_seconds": 280.42568780000056,
+  "validation": {
+    "bpb": 1.6833902028935657,
+    "token_ppl": 35.05550114717854,
+    "nll_nats": 1339537.2423699703,
+    "targets": 376599,
+    "utf8_bytes": 1148007,
+    "seconds": 4.083270699999957
+  },
+  "validation_raw_weights": null,
+  "recipe": {
+    "implementation": "student",
+    "config": "configs\\abl_no_rms.json",
+    "run_dir": "runs\\abl-no_rms",
+    "device": "cuda",
+    "precision": "fp32",
+    "threads": 4,
+    "seed": 17,
+    "steps": 1200,
+    "batch_size": 32,
+    "lr": 0.001,
+    "min_lr_ratio": 0.1,
+    "warmup": 100,
+    "weight_decay": 0.1,
+    "decay_2d_only": false,
+    "grad_clip": 1.0,
+    "ema": 0.0,
+    "eval_every": 0
+  },
+  "history": [
+    {
+      "step": 100,
+      "loss": 5.1269941329956055,
+      "seconds": 23.658638500000052
+    },
+    {
+      "step": 200,
+      "loss": 4.411055564880371,
+      "seconds": 46.95239050000055
+    },
+    {
+      "step": 300,
+      "loss": 4.124767780303955,
+      "seconds": 70.26462010000068
+    },
+    {
+      "step": 400,
+      "loss": 3.7392160892486572,
+      "seconds": 93.60436550000031
+    },
+    {
+      "step": 500,
+      "loss": 3.7004032135009766,
+      "seconds": 116.94349430000057
+    },
+    {
+      "step": 600,
+      "loss": 3.514936923980713,
+      "seconds": 140.29181340000014
+    },
+    {
+      "step": 700,
+      "loss": 3.367312431335449,
+      "seconds": 163.64113570000063
+    },
+    {
+      "step": 800,
+      "loss": 3.427058219909668,
+      "seconds": 187.00050680000004
+    },
+    {
+      "step": 900,
+      "loss": 3.2563090324401855,
+      "seconds": 210.36558530000002
+    },
+    {
+      "step": 1000,
+      "loss": 3.266204357147217,
+      "seconds": 233.71770509999988
+    },
+    {
+      "step": 1100,
+      "loss": 3.1310434341430664,
+      "seconds": 257.0751334000006
+    },
+    {
+      "step": 1200,
+      "loss": 3.2026898860931396,
+      "seconds": 280.4255871000005
+    }
+  ],
+  "validation_history": [],
+  "intermediate_validation_seconds": 0.0,
+  "process_seconds": 295.7159728000006,
+  "torch_version": "2.7.1+cu126",
+  "threads": 4,
+  "checkpoint_sha256": "028e67dbdb19acad5d0dcdd6bdcc399e79283c3ad3bbb1345503e8343ff23d9c",
+  "implementation_sha256": "6cfea5c2d7579f8d3834cec0741d648be52c75434aeba509d92f0017742a03b6",
+  "device": "cuda:0",
+  "device_name": "NVIDIA GeForce GTX 1650",
+  "peak_allocated_gb": 1.387413504,
+  "peak_reserved_gb": 1.547698176
+}

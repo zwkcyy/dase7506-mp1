@@ -1,0 +1,162 @@
+{
+  "source": "code/runs/e7-cache/measure_compare_r9_validation.txt",
+  "note": "sparse cache, stable environment",
+  "rounds": [
+    {
+      "round": 0,
+      "role": "baseline",
+      "scoring_seconds": 13.106056199991144,
+      "peak_ram_gib": 1.7942314147949219,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 0,
+      "role": "candidate",
+      "scoring_seconds": 43.811166200001026,
+      "peak_ram_gib": 1.8092498779296875,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 1,
+      "role": "baseline",
+      "scoring_seconds": 13.142918099998496,
+      "peak_ram_gib": 1.7896041870117188,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 1,
+      "role": "candidate",
+      "scoring_seconds": 44.03611689999525,
+      "peak_ram_gib": 1.8171043395996094,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 2,
+      "role": "baseline",
+      "scoring_seconds": 13.191159699999844,
+      "peak_ram_gib": 1.7932052612304688,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 2,
+      "role": "candidate",
+      "scoring_seconds": 44.326069399990956,
+      "peak_ram_gib": 1.8221473693847656,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 3,
+      "role": "baseline",
+      "scoring_seconds": 13.230589700004202,
+      "peak_ram_gib": 1.8005638122558594,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 3,
+      "role": "candidate",
+      "scoring_seconds": 43.976696199999424,
+      "peak_ram_gib": 1.8118705749511719,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 4,
+      "role": "baseline",
+      "scoring_seconds": 13.238580599994748,
+      "peak_ram_gib": 1.7716484069824219,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 4,
+      "role": "candidate",
+      "scoring_seconds": 44.454064599995036,
+      "peak_ram_gib": 1.8118972778320312,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 5,
+      "role": "baseline",
+      "scoring_seconds": 13.303865299996687,
+      "peak_ram_gib": 1.7945442199707031,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 5,
+      "role": "candidate",
+      "scoring_seconds": 44.03735630000301,
+      "peak_ram_gib": 1.8119850158691406,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 6,
+      "role": "baseline",
+      "scoring_seconds": 13.146733899993706,
+      "peak_ram_gib": 1.7740631103515625,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 6,
+      "role": "candidate",
+      "scoring_seconds": 44.667734200003906,
+      "peak_ram_gib": 1.8110809326171875,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 7,
+      "role": "baseline",
+      "scoring_seconds": 13.095779999988736,
+      "peak_ram_gib": 1.80023193359375,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 7,
+      "role": "candidate",
+      "scoring_seconds": 44.397866300001624,
+      "peak_ram_gib": 1.82647705078125,
+      "bpb": 1.5047378809600693
+    },
+    {
+      "round": 8,
+      "role": "baseline",
+      "scoring_seconds": 13.194897900000797,
+      "peak_ram_gib": 1.8000564575195312,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 8,
+      "role": "candidate",
+      "scoring_seconds": 44.10275730000285,
+      "peak_ram_gib": 1.8142509460449219,
+      "bpb": 1.5047378809600693
+    }
+  ],
+  "summary": {
+    "split": "validation",
+    "baseline": {
+      "median_scoring_seconds": 13.191159699999844,
+      "min_scoring_seconds": 13.095779999988736,
+      "max_peak_ram_gib": 1.8005638122558594,
+      "checkpoint_mib": 4.1683244705200195,
+      "bpb": 2.071083638533899
+    },
+    "candidate": {
+      "median_scoring_seconds": 44.10275730000285,
+      "min_scoring_seconds": 43.811166200001026,
+      "max_peak_ram_gib": 1.82647705078125,
+      "checkpoint_mib": 20.40135669708252,
+      "bpb": 1.5047378809600693
+    },
+    "time_ratios": [
+      3.3428184292411802,
+      3.3505585719202107,
+      3.3602860103339878,
+      3.3238651637716083,
+      3.35791773628758,
+      3.310117421289133,
+      3.3976297489390346,
+      3.3902422230703184,
+      3.342409894660889
+    ],
+    "time_ratio_median": 3.3505585719202107,
+    "within_limits": true
+  }
+}

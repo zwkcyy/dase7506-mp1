@@ -1,0 +1,92 @@
+{
+  "checkpoint": "runs\\e8-long3x-d8-drop10\\checkpoint.pt",
+  "best": {
+    "cache_lambda": 0.05,
+    "cache_theta": 10.0,
+    "validation_bpb": 1.5212853212487014
+  },
+  "cache_off_bpb": 1.550567742754668,
+  "gain_bpb": 0.029282421505966605,
+  "grid": [
+    {
+      "cache_lambda": 0.0,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.550567742754668
+    },
+    {
+      "cache_lambda": 0.03,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.526225130916096
+    },
+    {
+      "cache_lambda": 0.03,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5230772168135007
+    },
+    {
+      "cache_lambda": 0.03,
+      "cache_theta": 14.0,
+      "validation_bpb": 1.5230622177361153
+    },
+    {
+      "cache_lambda": 0.04,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.5253085908978945
+    },
+    {
+      "cache_lambda": 0.04,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5217909144466524
+    },
+    {
+      "cache_lambda": 0.04,
+      "cache_theta": 14.0,
+      "validation_bpb": 1.5218587101412773
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.5251281015529237
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5212853212487014
+    },
+    {
+      "cache_lambda": 0.05,
+      "cache_theta": 14.0,
+      "validation_bpb": 1.521429322179951
+    },
+    {
+      "cache_lambda": 0.06,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.525474858118979
+    },
+    {
+      "cache_lambda": 0.06,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.521337026010095
+    },
+    {
+      "cache_lambda": 0.06,
+      "cache_theta": 14.0,
+      "validation_bpb": 1.521551751199821
+    },
+    {
+      "cache_lambda": 0.07,
+      "cache_theta": 7.0,
+      "validation_bpb": 1.5262265197013989
+    },
+    {
+      "cache_lambda": 0.07,
+      "cache_theta": 10.0,
+      "validation_bpb": 1.5218154095115017
+    },
+    {
+      "cache_lambda": 0.07,
+      "cache_theta": 14.0,
+      "validation_bpb": 1.5220963155157283
+    }
+  ]
+}

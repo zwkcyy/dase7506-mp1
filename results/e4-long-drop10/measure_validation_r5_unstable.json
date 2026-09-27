@@ -1,0 +1,102 @@
+{
+  "source": "code/runs/e4-long-drop10/measure_compare_validation.txt",
+  "note": "unstable environment (Balanced power plan, background apps); superseded",
+  "rounds": [
+    {
+      "round": 0,
+      "role": "baseline",
+      "scoring_seconds": 12.925409300005413,
+      "peak_ram_gib": 1.7856521606445312,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 0,
+      "role": "candidate",
+      "scoring_seconds": 38.5405383999896,
+      "peak_ram_gib": 1.8152847290039062,
+      "bpb": 1.5392791923913614
+    },
+    {
+      "round": 1,
+      "role": "baseline",
+      "scoring_seconds": 16.675134599994635,
+      "peak_ram_gib": 1.7797737121582031,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 1,
+      "role": "candidate",
+      "scoring_seconds": 42.47401260001061,
+      "peak_ram_gib": 1.8166618347167969,
+      "bpb": 1.5392791923913614
+    },
+    {
+      "round": 2,
+      "role": "baseline",
+      "scoring_seconds": 15.62477690000378,
+      "peak_ram_gib": 1.800628662109375,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 2,
+      "role": "candidate",
+      "scoring_seconds": 69.7564979000017,
+      "peak_ram_gib": 1.8354225158691406,
+      "bpb": 1.5392791923913614
+    },
+    {
+      "round": 3,
+      "role": "baseline",
+      "scoring_seconds": 24.35619210000732,
+      "peak_ram_gib": 1.7886199951171875,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 3,
+      "role": "candidate",
+      "scoring_seconds": 71.72841939999489,
+      "peak_ram_gib": 1.8320999145507812,
+      "bpb": 1.5392791923913614
+    },
+    {
+      "round": 4,
+      "role": "baseline",
+      "scoring_seconds": 22.490795999998227,
+      "peak_ram_gib": 1.7926254272460938,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 4,
+      "role": "candidate",
+      "scoring_seconds": 71.06342009999207,
+      "peak_ram_gib": 1.8332138061523438,
+      "bpb": 1.5392791923913614
+    }
+  ],
+  "summary": {
+    "split": "validation",
+    "baseline": {
+      "median_scoring_seconds": 16.675134599994635,
+      "min_scoring_seconds": 12.925409300005413,
+      "max_peak_ram_gib": 1.800628662109375,
+      "checkpoint_mib": 4.1683244705200195,
+      "bpb": 2.071083638533899
+    },
+    "candidate": {
+      "median_scoring_seconds": 69.7564979000017,
+      "min_scoring_seconds": 38.5405383999896,
+      "max_peak_ram_gib": 1.8354225158691406,
+      "checkpoint_mib": 20.40123462677002,
+      "bpb": 1.5392791923913614
+    },
+    "time_ratios": [
+      2.9817654130282327,
+      2.5471466119394486,
+      4.46447961122471,
+      2.9449767478214848,
+      3.159666741008085
+    ],
+    "time_ratio_median": 2.9817654130282327,
+    "within_limits": true
+  }
+}

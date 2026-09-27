@@ -1,0 +1,19 @@
+{
+  "bpb": 1.5047380045271903,
+  "token_ppl": 24.033483087214915,
+  "nll_nats": 1197376.9323410315,
+  "targets": 376599,
+  "utf8_bytes": 1148007,
+  "seconds": 5.196171699994011,
+  "protocol": "7506-mp1-wt2-v2",
+  "split": "validation",
+  "precision": "fp32",
+  "checkpoint_sha256": "b1a16def50ec0cbc3656f46392c049dde58da3d907bad8dc70152fb73215da0b",
+  "implementation_sha256": "ec9777670bb9d592fabc3ee9378eb1a1c9324f605fc354c4e67a9665ce5f9c45",
+  "evaluator_sha256": "128bcb2dab0be0d427505bddb4671e3ab3a8f78e114be79a689c0f9029af133d",
+  "tokenizer_sha256": "020d1bc6aa4449c4f352b2e03d0e0fb4f39287f15297705e421b1fa7d817262e",
+  "device": "cuda:0",
+  "device_name": "NVIDIA GeForce GTX 1650",
+  "peak_allocated_gb": 0.289947648,
+  "peak_reserved_gb": 0.436207616
+}

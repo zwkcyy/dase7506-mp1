@@ -1,0 +1,102 @@
+{
+  "source": "code/runs/e6-cache/measure_compare_validation.txt",
+  "note": "dense cache implementation, unstable environment; superseded",
+  "rounds": [
+    {
+      "round": 0,
+      "role": "baseline",
+      "scoring_seconds": 26.14456390000123,
+      "peak_ram_gib": 1.8013267517089844,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 0,
+      "role": "candidate",
+      "scoring_seconds": 114.26155740000831,
+      "peak_ram_gib": 1.8337783813476562,
+      "bpb": 1.5183705424300888
+    },
+    {
+      "round": 1,
+      "role": "baseline",
+      "scoring_seconds": 23.49286490000668,
+      "peak_ram_gib": 1.7998619079589844,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 1,
+      "role": "candidate",
+      "scoring_seconds": 91.58808119999594,
+      "peak_ram_gib": 1.8323211669921875,
+      "bpb": 1.5183705424300888
+    },
+    {
+      "round": 2,
+      "role": "baseline",
+      "scoring_seconds": 30.784792799997376,
+      "peak_ram_gib": 1.7896499633789062,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 2,
+      "role": "candidate",
+      "scoring_seconds": 84.95795660000294,
+      "peak_ram_gib": 1.8307151794433594,
+      "bpb": 1.5183705424300888
+    },
+    {
+      "round": 3,
+      "role": "baseline",
+      "scoring_seconds": 25.37757209999836,
+      "peak_ram_gib": 1.7961387634277344,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 3,
+      "role": "candidate",
+      "scoring_seconds": 109.31874829999288,
+      "peak_ram_gib": 1.8331222534179688,
+      "bpb": 1.5183705424300888
+    },
+    {
+      "round": 4,
+      "role": "baseline",
+      "scoring_seconds": 14.883169299995643,
+      "peak_ram_gib": 1.8016700744628906,
+      "bpb": 2.071083638533899
+    },
+    {
+      "round": 4,
+      "role": "candidate",
+      "scoring_seconds": 100.1253899000003,
+      "peak_ram_gib": 1.8330574035644531,
+      "bpb": 1.5183705424300888
+    }
+  ],
+  "summary": {
+    "split": "validation",
+    "baseline": {
+      "median_scoring_seconds": 25.37757209999836,
+      "min_scoring_seconds": 14.883169299995643,
+      "max_peak_ram_gib": 1.8016700744628906,
+      "checkpoint_mib": 4.1683244705200195,
+      "bpb": 2.071083638533899
+    },
+    "candidate": {
+      "median_scoring_seconds": 100.1253899000003,
+      "min_scoring_seconds": 84.95795660000294,
+      "max_peak_ram_gib": 1.8337783813476562,
+      "checkpoint_mib": 20.40135669708252,
+      "bpb": 1.5183705424300888
+    },
+    "time_ratios": [
+      4.370375342156804,
+      3.898548839821145,
+      2.7597378079481563,
+      4.30769136894699,
+      6.727423970110292
+    ],
+    "time_ratio_median": 4.30769136894699,
+    "within_limits": true
+  }
+}
