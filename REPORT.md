@@ -58,7 +58,7 @@ where $h$ are the final normalised hidden states of the same window. $h_i$ is th
 
 **Causality and validity.** Position $t$ uses its own query $h_t$, keys $h_i$ with $i < t$, and values $x_{i+1}$ with $i+1 \le t$. All of these depend only on `ids[:, :t+1]`. Position 0 has no history and uses $p_{\text{model}}$ alone. Both parts of the mixture are normalised distributions, so the result sums to one. Nothing is stored between calls. The course contract tests and my extra checks (`check_config.py`, run with the cache on) confirm causality, normalisation, batch independence and the absence of carried state.
 
-**Sparse exact implementation.** My first implementation built a dense 2048-way cache distribution at every position and applied `log`/`logaddexp` over the whole vocabulary. That work falls on 32 × 256 × 2048 ≈ 16.8M elements per batch, several times over. But a token that has not appeared earlier in the window has zero cache probability. Its mixed probability is exactly $(1-\lambda)\,p_{\text{model}}$, a constant shift of $\log(1-\lambda)$ in log space. The final implementation applies this shift once. It then recomputes only the at most 255 tokens seen in the window, using a token-equality matrix to add up the weights of repeated tokens. Against the dense version, it agrees to within 8.6e-6 (fp32 rounding) on randomised tests and to within 9e-12 in validation BPB. The cache's extra scoring time falls from about 1.3× to **0.23×** baseline time.
+**Sparse exact implementation.** My first implementation built a dense 2048-way cache distribution at every position and applied `log`/`logaddexp` over the whole vocabulary. That work falls on 32 × 256 × 2048 ≈ 16.8M elements per batch, several times over. But a token that has not appeared earlier in the window has zero cache probability. Its mixed probability is exactly $(1-\lambda)\,p_{\text{model}}$, a constant shift of $\log(1-\lambda)$ in log space. The final implementation applies this shift once. It then recomputes only the at most 255 tokens seen in the window, using a token-equality matrix to add up the weights of repeated tokens. Against the dense version, it agrees to within 8.6e-6 (fp32 rounding) on randomised tests and to within 9e-12 in validation BPB. The cache's extra scoring time falls from about 1.3× (dense version, measured only in the unstable session) to **0.23×** baseline time.
 
 **Tuning.** $\lambda$ and $\theta$ are selected on the validation split for a trained checkpoint and written into its configuration, so the evaluator rebuilds the cached predictor with no extra files.
 
@@ -67,7 +67,7 @@ where $h$ are the final normalised hidden states of the same window. $h_i$ is th
 - **Selection:** every choice (architecture, learning rate, dropout, depth, cache parameters, final model) used validation BPB only. I wrote the selection rules down before looking at the candidates, e.g. prefer the cheaper model if two differ by less than 0.003. The test split was evaluated **once**, after the code was frozen at commit `fb51697`.
 - **Hardware:** Intel Core i5-9300HF (4 cores), NVIDIA GTX 1650 (4 GB), Windows 11. GPU training used fp32, because on this GPU `bf16` is emulated and slower (107.5 s vs 72.2 s for the baseline recipe).
 - **Seed:** 17 for every run. Each configuration was run with one seed, so differences below about 0.005 BPB cannot be told apart from noise (Section 7).
-- **Resource measurement (`measure.py`):** the unmodified `evaluate.py` runs on CPU in fp32 with 4 threads. Baseline and candidate alternate within one session. The reported figure is the median of per-round time ratios, so slow drift in machine speed cancels out. Peak RAM is the summed RSS of the whole evaluation process tree, polled every 20 ms. On Windows the venv's `python.exe` is only a launcher, so measuring the launcher alone would report about 5 MB. Measurements taken in an unstable environment (Balanced power mode) were discarded and repeated.
+- **Resource measurement (`measure.py`):** the unmodified `evaluate.py` runs on CPU in fp32 with 4 threads. Baseline and candidate alternate within one session. The reported figure is the median of per-round time ratios, so slow drift in machine speed cancels out. Peak RAM is the summed RSS of the whole evaluation process tree, polled every 20 ms. On Windows the venv's `python.exe` is only a launcher, so measuring the launcher alone would report about 5 MB. Measurements taken in an unstable environment (Balanced power mode) were repeated in a stable one, except the superseded dense cache (§3.3).
 
 ## 5. Results
 
@@ -138,10 +138,11 @@ Validation BPB of E7 with the cache, over λ (rows) and θ (columns).
 | 0.02 | 1.5224 | 1.5134 | 1.5076 | 1.5088 | 1.5123 | 1.5146 |
 | 0.05 | 1.5275 | 1.5135 | **1.5047** | 1.5073 | 1.5132 | 1.5172 |
 | 0.10 | 1.5419 | 1.5219 | 1.5098 | 1.5138 | 1.5228 | 1.5287 |
+| 0.15 | 1.5598 | 1.5350 | 1.5200 | 1.5254 | 1.5369 | 1.5443 |
 | 0.20 | 1.5802 | 1.5511 | 1.5336 | 1.5402 | 1.5538 | 1.5628 |
 | 0.30 | 1.6280 | 1.5906 | 1.5685 | 1.5772 | 1.5951 | 1.6068 |
 
-Summary on three checkpoints (best from a finer grid λ ∈ {0.03…0.07} × θ ∈ {7, 10, 14}):
+Summary on three checkpoints (E7 and E8: best of a finer grid λ ∈ {0.03…0.07} × θ ∈ {7, 10, 14}; E4: coarse grid):
 
 | Checkpoint | Cache off | Uniform copy (λ 0.05, θ 0) | Best (λ 0.05, θ 10) | Gain |
 |---|---|---|---|---|
@@ -151,7 +152,7 @@ Summary on three checkpoints (best from a finer grid λ ∈ {0.03…0.07} × θ 
 
 Four findings stand out:
 
-1. **The similarity kernel is what matters.** Uniform copying (θ = 0) changes BPB by −0.004 to +0.004 across the three checkpoints. Similarity-weighted copying gains 0.021–0.029. So the cache helps by retrieving *contextually matching* earlier positions, not by boosting tokens that appeared recently.
+1. **The similarity kernel is what matters.** Uniform copying (θ = 0, λ = 0.05) changes BPB by −0.004 to +0.004 across the three checkpoints. Similarity-weighted copying gains 0.021–0.029. So the cache helps by retrieving *contextually matching* earlier positions, not by boosting tokens that appeared recently.
 2. **The optimal cache weight is small (λ = 0.05).** Attention already performs most copying, and the cache acts as a correction. Larger λ lets cache noise override the model.
 3. **Moderate sharpness is best.** θ = 10 beats both softer (5) and sharper (40, 80) kernels. A very sharp kernel commits to a single match and becomes overconfident when that match is wrong.
 4. **The effect is robust.** The optimum is the same (λ = 0.05, θ = 10) on all three checkpoints, which differ in training length and depth.
@@ -181,12 +182,12 @@ About 1.8 GiB of the peak RAM is evaluator overhead that every model shares. The
 | Scale to w256 d6 (E1) | 0.206 | +1.80 | 3.3× GPU time per step |
 | Modern architecture (E2 vs E1) | 0.178 | +0.27 | +27% per step |
 | 12× training + dropout + EMA (E7 vs E3) | 0.158 | 0 | 12× steps (≈ 62 min) |
-| Cache (E7 + cache vs E7) | 0.023 | +0.23 | none (≈ 40 validation passes) |
+| Cache (E7 + cache vs E7) | 0.023 | +0.23 | none (53 validation passes) |
 | 8 layers (E8 vs E7) | −0.023 | +0.85 | +33% per step |
 
-The architecture is the most efficient change: it costs 0.27× in scoring time for 0.18 BPB. Longer training is free at evaluation time but costs an hour of GPU time. The cache has the worst gain per unit of scoring time, but it needs no training, and its cost depends strongly on implementation (1.3× dense vs 0.23× sparse, for identical outputs). Depth was the only change that added cost and made results worse.
+The architecture is the most efficient change: it costs 0.27× in scoring time for 0.18 BPB. Longer training is free at evaluation time but costs an hour of GPU time. The cache has the worst gain per unit of scoring time, but it needs no training, and its cost depends strongly on implementation (≈ 1.3× dense in the unstable session vs 0.23× sparse, for identical outputs). Depth was the only change that added cost and made results worse.
 
-**Total cost:** about 5.1 GPU-hours of training across all runs (including short timing and check runs), 14 minutes of CPU training for the official baseline, one killed run of about 10 minutes, and about 2 hours of CPU timing measurements. The final model's own training took 62.5 minutes on the GTX 1650.
+**Total cost:** about 5.1 GPU-hours of training across all completed runs (including the short smoke and timing runs), 14 minutes of CPU training for the official baseline plus 2 minutes for two 100-step check runs, one killed run of about 10 minutes, and about 2 hours of CPU timing measurements. The final model's own training took 62.5 minutes on the GTX 1650.
 
 ## 7. Critical analysis and limitations
 
