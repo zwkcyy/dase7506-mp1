@@ -1,5 +1,7 @@
 # MP1: a small GPT trained from scratch on WikiText-2 (HKU DASE7506)
 
+Author: Zhu Wenkang (HKU student ID u3684363), GitHub: zwkcyy
+
 Final predictor: a 5.3M-parameter GPT (RoPE, SwiGLU, RMSNorm, no biases, scaled init) trained for
 14,400 steps with dropout 0.1 and an EMA of the weights, plus a sparse within-window neural cache
 at evaluation time. It uses the supplied evaluator and data unchanged.
@@ -52,7 +54,7 @@ python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 ```
 
-Download the checkpoint from **<RELEASE_URL>** and save it as `code/runs/final/checkpoint.pt`.
+Download the checkpoint from **https://github.com/zwkcyy/dase7506-mp1/releases/download/v1.0/checkpoint.pt** and save it as `code/runs/final/checkpoint.pt`.
 Then check its hash:
 
 ```bash
@@ -279,7 +281,26 @@ Windows 11. All GPU training used fp32.
 
 ## 10. AI assistance
 
-<AI_ASSISTANCE_STATEMENT>
+AI assistance was used substantially in this project, as the course permits. I disclose it here in full.
+
+- **Claude (Anthropic, claude.ai chat)** read the starter package with me and translated and
+  explained the guide. It proposed the overall plan (modernise the architecture, train longer
+  with regularisation, add a within-window neural cache as the core mechanism) and the
+  experiment design: equal-budget comparisons, component ablations, the cache λ/θ ablation,
+  the longer-training baseline control, and the validation-only selection rules. It wrote the
+  first versions of `student.py` (configurable model and cache, including the sparse exact
+  rewrite of the cache), the recipe options and EMA in `train.py`, and `tune_cache.py`,
+  `measure.py`, `check_config.py` and `check_cache_equiv.py`. It also helped interpret results
+  and draft this README and the report.
+- **Claude Code (Anthropic, in VS Code)** set up the environment and ran every training,
+  evaluation and measurement command on my machine. It kept `run_log.csv` and the git history,
+  fixed the Windows process-tree memory measurement, and wrote `collect_results.py`,
+  `make_figures.py` and the first draft of this README.
+- **My role:** I made the decisions at each stage, ran the work on my own hardware, and
+  reviewed the code and results. I understand and can explain every part of the
+  implementation. Every number in this repository and the report comes from the logged runs
+  in `results/`. No result was produced or edited by hand. Model selection used the
+  validation split only, and the test split was evaluated once, after the method was frozen.
 
 ## 11. Data attribution
 
